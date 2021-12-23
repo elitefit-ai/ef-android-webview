@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">EliteFit.AI WebView</string>
+    <string name="app_name">EliteFit WebView</string>
+    <string name="elitefit">EliteFit</string>
 </resources>
