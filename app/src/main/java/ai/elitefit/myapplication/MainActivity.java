@@ -1,13 +1,8 @@
 package ai.elitefit.myapplication;
 
-import androidx.annotation.NonNull;
-import androidx.annotation.RequiresApi;
-import androidx.appcompat.app.AppCompatActivity;
-
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlertDialog;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.net.Uri;
@@ -22,6 +17,10 @@ import android.webkit.WebChromeClient;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.RequiresApi;
+import androidx.appcompat.app.AppCompatActivity;
 
 import java.net.URISyntaxException;
 import java.util.List;
@@ -80,21 +79,15 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                         // In this sample, we only accept video capture request.
                         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(MainActivity.this)
                                 .setTitle("Allow Permission to camera")
-                                .setPositiveButton("Allow", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        mPermissionRequest.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
-                                        Log.d(TAG,"Granted");
-                                    }
+                                .setPositiveButton("Allow", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    mPermissionRequest.grant(new String[]{PermissionRequest.RESOURCE_VIDEO_CAPTURE});
+                                    Log.d(TAG,"Granted");
                                 })
-                                .setNegativeButton("Deny", new DialogInterface.OnClickListener() {
-                                    @Override
-                                    public void onClick(DialogInterface dialog, int which) {
-                                        dialog.dismiss();
-                                        mPermissionRequest.deny();
-                                        Log.d(TAG,"Denied");
-                                    }
+                                .setNegativeButton("Deny", (dialog, which) -> {
+                                    dialog.dismiss();
+                                    mPermissionRequest.deny();
+                                    Log.d(TAG,"Denied");
                                 });
                         AlertDialog alertDialog = alertDialogBuilder.create();
                         alertDialog.show();
