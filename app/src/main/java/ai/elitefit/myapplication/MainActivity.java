@@ -9,6 +9,7 @@ import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -129,7 +130,8 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
                             view.loadUrl(fallbackUrl);
                             return true;
                         }
-                    } catch (URISyntaxException e) {
+                    }
+                    catch (URISyntaxException e) {
                         // Syntax problem with uri
                     }
                 }
@@ -213,6 +215,26 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
     {
         super.onRestoreInstanceState(savedInstanceState);
         webView.restoreState(savedInstanceState);
+    }
+
+    @RequiresApi(api = Build.VERSION_CODES.KITKAT)
+    @Override
+    public void onConfigurationChanged(@NonNull Configuration config) {
+        super.onConfigurationChanged(config);
+        View decorView = getWindow().getDecorView();
+        if (config.orientation == Configuration.ORIENTATION_LANDSCAPE) {
+            // Hide the status bar.
+            decorView.setSystemUiVisibility(
+                    View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                            | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION
+                            | View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+                            | View.SYSTEM_UI_FLAG_HIDE_NAVIGATION // hide nav bar
+                            | View.SYSTEM_UI_FLAG_FULLSCREEN // hide status bar
+                            | View.SYSTEM_UI_FLAG_IMMERSIVE);
+        } else {
+            // Show the status bar.
+            decorView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_VISIBLE);
+        }
     }
 
 }
