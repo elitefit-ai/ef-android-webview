@@ -12,6 +12,8 @@ import android.util.Log;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.Window;
+import android.webkit.ConsoleMessage;
+import android.webkit.CookieManager;
 import android.webkit.PermissionRequest;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -31,7 +33,7 @@ import pub.devrel.easypermissions.EasyPermissions;
 public class MainActivity extends AppCompatActivity implements EasyPermissions.PermissionCallbacks {
 
     WebView webView;
-    String url = "https://elitefitforyou.com/";
+    String url = "https://elitefitforyou.com/dashboard";
 
     private final String TAG = "TEST";
     private PermissionRequest mPermissionRequest;
@@ -49,16 +51,36 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
         requestWindowFeature(Window.FEATURE_NO_TITLE); //will hide the title
         Objects.requireNonNull(getSupportActionBar()).hide(); // hide the title bar
 
+        CookieManager.getInstance().setAcceptCookie(true);
+
         setContentView(R.layout.activity_main);
 
         webView = findViewById(R.id.webView);
 
         webView.getSettings().setJavaScriptEnabled(true);
+        webView.getSettings().setJavaScriptCanOpenWindowsAutomatically(true);
         webView.getSettings().setAllowFileAccessFromFileURLs(true);
         webView.getSettings().setAllowUniversalAccessFromFileURLs(true);
         webView.getSettings().setDomStorageEnabled(true);
         webView.getSettings().setDatabaseEnabled(true);
         webView.getSettings().setUserAgentString(System.getProperty("http.agent"));
+
+        webView.getSettings().setDomStorageEnabled(true);
+        webView.getSettings().setAppCacheEnabled(true);
+        webView.getSettings().setAppCachePath(getApplicationContext().getFilesDir().getAbsolutePath() + "/cache");
+        webView.getSettings().setDatabaseEnabled(true);
+        webView.getSettings().setDatabasePath(getApplicationContext().getFilesDir().getAbsolutePath() + "/databases");
+
+        /**
+         * Adding iPhone to user agent
+         * TODO: Remove this
+         * */
+        String userAgent = webView.getSettings().getUserAgentString();
+        Toast.makeText(MainActivity.this,"UA: " + userAgent, Toast.LENGTH_SHORT).show();
+        webView.getSettings().setUserAgentString(userAgent + " iPhone");
+
+        userAgent = webView.getSettings().getUserAgentString();
+        Toast.makeText(MainActivity.this,"UA: " + userAgent, Toast.LENGTH_SHORT).show();
 
         webView.setWebChromeClient(new WebChromeClient() {
 
@@ -101,6 +123,13 @@ public class MainActivity extends AppCompatActivity implements EasyPermissions.P
             public void onPermissionRequestCanceled(PermissionRequest request) {
                 super.onPermissionRequestCanceled(request);
                 Toast.makeText(MainActivity.this,"Permission Denied", Toast.LENGTH_SHORT).show();
+            }
+
+            @Override
+            public boolean onConsoleMessage(ConsoleMessage consoleMessage) {
+                android.util.Log.d("WebView", consoleMessage.message());
+                Toast.makeText(MainActivity.this, consoleMessage.message(), Toast.LENGTH_SHORT).show();
+                return true;
             }
         });
 
